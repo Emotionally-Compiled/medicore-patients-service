@@ -1,22 +1,16 @@
 package medicore.patientsService.domain.models;
 
-import medicore.patientsService.domain.exceptions.InvalidCredentials;
+import medicore.patientsService.domain.exceptions.InvalidCredentialsException;
 
-public class IdentityDocument {
-    private final String value;
+public record IdentityDocument(String value) {
     /*
     Just for MVP.
-    Later it will be an ENUM class named 'DocumentType' with a switch case with different validation depending on the type of id
+    Later create an ENUM class named 'DocumentType', Then with a switch case with different validation depending on the type of id
   */
 
-    public IdentityDocument(String value) {
-        if(value == null || value.trim().isEmpty()){
-           throw new InvalidCredentials("Identity Document", IdentityDocument.class);
+    public IdentityDocument {
+        if (value == null || value.trim().isEmpty()) {
+            throw new InvalidCredentialsException("Identity Document", IdentityDocument.class);
         }
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 }

@@ -1,6 +1,5 @@
 package medicore.patientsService.domain.ports.in;
 
-import medicore.patientsService.domain.models.IdentityDocument;
 
 public interface RegisterPatientUseCase {
 
@@ -9,7 +8,7 @@ public interface RegisterPatientUseCase {
     record RegisterCommand(
             String name,
             String lastName,
-            IdentityDocument identityDocument,
-            String email
+            String password,
+            String identityDocument
     ){}
 }

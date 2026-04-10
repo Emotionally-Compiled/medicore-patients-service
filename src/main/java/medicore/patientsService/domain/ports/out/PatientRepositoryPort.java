@@ -3,5 +3,5 @@ package medicore.patientsService.domain.ports.out;
 import medicore.patientsService.domain.models.Patient;
 
 public interface PatientRepositoryPort {
-    Patient save (Patient patient);
+    void save (Patient patient);
 }

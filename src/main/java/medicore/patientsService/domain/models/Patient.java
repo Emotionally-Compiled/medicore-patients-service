@@ -1,6 +1,6 @@
 package medicore.patientsService.domain.models;
 
-import medicore.patientsService.domain.exceptions.InvalidCredentials;
+import medicore.patientsService.domain.exceptions.InvalidCredentialsException;
 
 import java.time.LocalDate;
 
@@ -26,42 +26,48 @@ public class Patient {
     public Patient(IdentityDocument identityDocument, LocalDate dateOfBirth, String email, String phoneNumber, String lastName, String name) {
         this.identityDocument = identityDocument;
         this.dateOfBirth = dateOfBirth;
-        this.email = validateEmail(email);
-        this.phoneNumber = validatePhoneNumber(phoneNumber);
+        this.email = email;
+        this.phoneNumber = phoneNumber;
         this.lastName = validateCredential(lastName) ;
         this.name = validateCredential(name);
     }
 
+    public Patient( String UUID,String name, String lastName, IdentityDocument identityDocument) {
+        this.UUID = UUID;
+        this.name = validateCredential(name);
+        this.lastName = validateCredential(lastName);
+        this.identityDocument = identityDocument;
+    }
 
     public void updateEmail(String email){
-        this.email = email;
+        this.email = validateEmail(email);
     }
 
     public void updatePhoneNumber(String phoneNumber){
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = validatePhoneNumber(phoneNumber);
     }
 
     public String validateCredential(String value){
         if( value == null || value.trim().isEmpty()){
-            throw new InvalidCredentials("Patient", Patient.class);
+            throw new InvalidCredentialsException("Patient", Patient.class);
         }
         return value.trim();
     }
 
     public String validatePhoneNumber(String value){
-        String phone = validateCredential(value);
-        if (!phone.matches("\\b\\d+\\b")){
-            throw new InvalidCredentials("Phone number : "  + phone, Patient.class);
+        //String phone = validateCredential(value);
+        if (!value.matches("\\b\\d+\\b")){ // regex only to accept numbers
+            throw new InvalidCredentialsException("Phone number : "  + value, Patient.class);
         }
-        return phone;
+        return value;
     }
 
     public String validateEmail(String value){
-        String email = validateCredential(value);
-        if(!email.matches("^\\\\S+@\\\\S+\\\\.\\\\S+$")){
-            throw new InvalidCredentials("Email : " + email, Patient.class);
+        //String email = validateCredential(value);
+        if(!value.matches("^\\\\S+@\\\\S+\\\\.\\\\S+$")){ // regex for email
+            throw new InvalidCredentialsException("Email : " + value, Patient.class);
         }
-        return email;
+        return value;
     }
 
     public String getUUID() {
