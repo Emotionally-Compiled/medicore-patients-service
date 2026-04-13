@@ -5,17 +5,17 @@ import medicore.patientsService.domain.exceptions.InvalidCredentialsException;
 import java.time.LocalDate;
 
 public class Patient {
-    private  String UUID;
-    private  String name;
+    private  String uuid;
+    private  String firstName;
     private  String lastName;
     private  String phoneNumber;
     private  String email;
     private  LocalDate dateOfBirth;
     private  IdentityDocument identityDocument ;
 
-    public Patient(String UUID, String name, String lastName, String phoneNumber, String email, LocalDate dateOfBirth, IdentityDocument identityDocument){
-        this.UUID = UUID;
-        this.name = name;
+    public Patient(String uuid, String firstName, String lastName, String phoneNumber, String email, LocalDate dateOfBirth, IdentityDocument identityDocument){
+        this.uuid = uuid;
+        this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -23,29 +23,25 @@ public class Patient {
         this.identityDocument = identityDocument;
     }
 
-    public Patient(IdentityDocument identityDocument, LocalDate dateOfBirth, String email, String phoneNumber, String lastName, String name) {
+    public Patient(IdentityDocument identityDocument, LocalDate dateOfBirth, String email, String phoneNumber, String lastName, String firstName) {
         this.identityDocument = identityDocument;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.lastName = validateCredential(lastName) ;
-        this.name = validateCredential(name);
+        this.firstName = validateCredential(firstName);
     }
 
-    public Patient( String UUID,String name, String lastName, IdentityDocument identityDocument) {
-        this.UUID = UUID;
-        this.name = validateCredential(name);
+    public Patient( String uuid,String firstName, String lastName, IdentityDocument identityDocument) {
+        this.uuid = uuid;
+        this.firstName = validateCredential(firstName);
         this.lastName = validateCredential(lastName);
         this.identityDocument = identityDocument;
     }
 
-    public void updateEmail(String email){
-        this.email = validateEmail(email);
+    public Patient() {
     }
 
-    public void updatePhoneNumber(String phoneNumber){
-        this.phoneNumber = validatePhoneNumber(phoneNumber);
-    }
 
     public String validateCredential(String value){
         if( value == null || value.trim().isEmpty()){
@@ -70,12 +66,12 @@ public class Patient {
         return value;
     }
 
-    public String getUUID() {
-        return UUID;
+    public String getuuid() {
+        return uuid;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
     public String getLastName() {
@@ -96,5 +92,33 @@ public class Patient {
 
     public IdentityDocument getIdentityDocument() {
         return identityDocument;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = validateCredential(firstName);
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = validateCredential(lastName);
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = validatePhoneNumber(phoneNumber);
+    }
+
+    public void setEmail(String email) {
+        this.email = validateEmail(email);
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setIdentityDocument(IdentityDocument identityDocument) {
+        this.identityDocument = identityDocument;
     }
 }

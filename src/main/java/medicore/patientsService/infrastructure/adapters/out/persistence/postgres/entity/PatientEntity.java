@@ -2,15 +2,22 @@ package medicore.patientsService.infrastructure.adapters.out.persistence.postgre
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity(name = "patients")
-@Table(name = "patients")
+@Table(name = "patients", indexes = {
+        @Index(name = "idx_email", columnList = "email", unique = true),
+        @Index(name = "idx_identity_document", columnList = "identityDocument", unique = true),
+        @Index(name = "idx_lastname_firstname", columnList = "lastName,firstName")
+})
 @NoArgsConstructor
 public class PatientEntity {
 
@@ -33,11 +40,20 @@ public class PatientEntity {
     @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "date_of_birth")
+    @JdbcTypeCode(SqlTypes.DATE)
+    private LocalDate dateOfBirth;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", updatable = true)
+    @UpdateTimestamp
+    @Column(name = "updated_at", updatable = true, nullable = false)
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
     private LocalDateTime updatedAt;
+
+
+
 }
