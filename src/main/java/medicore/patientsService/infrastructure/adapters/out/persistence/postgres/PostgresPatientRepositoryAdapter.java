@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 public class PostgresPatientRepositoryAdapter implements PatientRepositoryPort {
 
     private final PostgresPatientJpaRepository patientRepository;
-    private final PatientPersistenceMapper mapper;
+   private final PatientPersistenceMapper mapper;
 
     @Override
-    public void save(Patient patient) {
+    public void save(Patient patient)   {
        patientRepository.save(mapper.toEntity(patient));
     }
 }

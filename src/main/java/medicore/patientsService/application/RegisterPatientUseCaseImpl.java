@@ -1,5 +1,6 @@
 package medicore.patientsService.application;
 
+import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import medicore.patientsService.domain.exceptions.RegistrationFailedException;
 import medicore.patientsService.domain.models.IdentityDocument;
@@ -11,13 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Slf4j
-
 public class RegisterPatientUseCaseImpl implements RegisterPatientUseCase {
 
     private final PatientRepositoryPort patientRepositoryPort;
     private final IdentityProviderPort identityProviderPort;
-
-
 
 
     public RegisterPatientUseCaseImpl(PatientRepositoryPort patientRepositoryPort,
@@ -32,9 +30,9 @@ public class RegisterPatientUseCaseImpl implements RegisterPatientUseCase {
 
         log.info("Start patient registration process for Identity Document: {}", command.identityDocument());
 
-        /*Create IdentityDocument and patient object*/
-        IdentityDocument newID = new IdentityDocument(command.identityDocument());
+        IdentityDocument newID = new IdentityDocument(command.identityDocument()); //Create IdentityDocument object
         String authId = null;
+
         try {
             /*
                 Call external IAM (Identity and Access Management)
@@ -53,15 +51,23 @@ public class RegisterPatientUseCaseImpl implements RegisterPatientUseCase {
             patientRepositoryPort.save(newPatient);
             log.info("Patient registered successfully UUID {} ", authId);
 
-        } catch (Exception e) { // catch unexpected errors
+
+        } catch (PersistenceException e){ // catch errors from database
+            log.error("Unexpected error during saving patient from database for document: {}. Reason: {}",
+                    command.identityDocument(),
+                    e.getMessage()
+            );
+            identityProviderPort.deleteUser(authId);
+            log.info("Patient with uuid {} deleted from identity provider database ", authId);
+            throw new RegistrationFailedException("Error saving patient from database ",e);
+        }
+
+        catch (Exception e) { // catch unexpected errors
 
             log.error("Unexpected error during patient registration for document: {}. Reason: {}",
                     command.identityDocument(),
                     e.getMessage()
             );
-
-            identityProviderPort.deleteUser(authId);
-            log.warn("In case of inserted data in keycloak. The petition from user ({}) change into a request to delete it", command.identityDocument());
 
             throw new RegistrationFailedException("Internal Error during Register", e);
         }
