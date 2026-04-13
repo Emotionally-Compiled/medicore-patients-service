@@ -1,0 +1,7 @@
+name: ci.yml
+
+on: [push, pull_request]
+
+jobs:
+  call-global-workflow:
+    uses: Emotionally-Compiled/.github/.github/workflows/ci-backend.yml@main
