@@ -1,0 +1,19 @@
+server:
+  port: 0
+spring:
+  cloud:
+    config:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: testUser
+    password: testPass
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://mock-server.com/auth/realms/medicore
+eureka:
+  client:
+    enabled: false
