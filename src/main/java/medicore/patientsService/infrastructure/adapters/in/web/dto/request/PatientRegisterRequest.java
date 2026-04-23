@@ -3,7 +3,9 @@ package medicore.patientsService.infrastructure.adapters.in.web.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record PatientRegisterRequest(
         @NotBlank(message = "The name is mandatory")
         String firstName,

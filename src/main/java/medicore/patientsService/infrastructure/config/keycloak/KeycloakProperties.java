@@ -9,5 +9,6 @@ public record KeycloakProperties(
         String clientSecret,
         String kcUser,
         String kcPass,
-        String realm
+        String realm,
+        String principleAttribute
 ) { }
