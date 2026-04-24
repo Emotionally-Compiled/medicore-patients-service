@@ -28,43 +28,20 @@ public class Patient {
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.lastName = validateCredential(lastName) ;
-        this.firstName = validateCredential(firstName);
+        this.lastName = lastName ;
+        this.firstName = firstName;
     }
 
     public Patient( String uuid,String firstName, String lastName, IdentityDocument identityDocument) {
         this.uuid = uuid;
-        this.firstName = validateCredential(firstName);
-        this.lastName = validateCredential(lastName);
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.identityDocument = identityDocument;
     }
 
     public Patient() {
     }
 
-
-    public String validateCredential(String value){
-        if( value == null || value.trim().isEmpty()){
-            throw new InvalidCredentialsException("Patient", Patient.class);
-        }
-        return value.trim();
-    }
-
-    public String validatePhoneNumber(String value){
-        //String phone = validateCredential(value);
-        if (!value.matches("\\b\\d+\\b")){ // regex only to accept numbers
-            throw new InvalidCredentialsException("Phone number : "  + value, Patient.class);
-        }
-        return value;
-    }
-
-    public String validateEmail(String value){
-        //String email = validateCredential(value);
-        if(!value.matches("^\\\\S+@\\\\S+\\\\.\\\\S+$")){ // regex for email
-            throw new InvalidCredentialsException("Email : " + value, Patient.class);
-        }
-        return value;
-    }
 
     public String getuuid() {
         return uuid;
@@ -99,19 +76,19 @@ public class Patient {
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = validateCredential(firstName);
+        this.firstName = firstName;
     }
 
     public void setLastName(String lastName) {
-        this.lastName = validateCredential(lastName);
+        this.lastName = lastName;
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = validatePhoneNumber(phoneNumber);
+        this.phoneNumber = phoneNumber;
     }
 
     public void setEmail(String email) {
-        this.email = validateEmail(email);
+        this.email = email;
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
