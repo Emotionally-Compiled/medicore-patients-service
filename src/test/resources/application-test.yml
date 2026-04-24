@@ -1,0 +1,34 @@
+server:
+  port: 0
+spring:
+  cloud:
+    config:
+      enabled: false
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: testUser
+    password: testPass
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://mock-server.com/auth/realms/medicore
+eureka:
+  client:
+    enabled: false
+
+kc:
+  server-url: "http://localhost:9999" # <- ¡Esto es lo que está pidiendo a gritos!
+  realm: "medicore-test"
+  client-id: "test-client"
+  client-secret: "test-secret"
+  kc-user: "test"
+  kc-pass: "test123"
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: preferred_username
