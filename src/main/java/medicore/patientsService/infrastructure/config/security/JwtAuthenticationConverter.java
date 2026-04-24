@@ -1,6 +1,6 @@
 package medicore.patientsService.infrastructure.config.security;
 
-import org.jspecify.annotations.Nullable;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -25,7 +25,7 @@ public class JwtAuthenticationConverter implements Converter<Jwt, AbstractAuthen
     private String principleAttribute;
 
     @Override
-    public @Nullable AbstractAuthenticationToken convert(Jwt jwt) {
+    public AbstractAuthenticationToken convert(Jwt jwt) {
         Collection<GrantedAuthority> authorities = Stream
                 .concat(jwtGrantedAuthoritiesConverter.convert(jwt).stream(),extractRoles(jwt).stream())
                 .toList();
