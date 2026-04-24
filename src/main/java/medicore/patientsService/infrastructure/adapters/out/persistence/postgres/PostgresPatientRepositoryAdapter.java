@@ -7,15 +7,23 @@ import medicore.patientsService.infrastructure.adapters.out.persistence.postgres
 import medicore.patientsService.infrastructure.adapters.out.persistence.postgres.repository.PostgresPatientJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @AllArgsConstructor
 public class PostgresPatientRepositoryAdapter implements PatientRepositoryPort {
 
     private final PostgresPatientJpaRepository patientRepository;
-   private final PatientPersistenceMapper mapper;
+    private final PatientPersistenceMapper mapper;
 
     @Override
     public void save(Patient patient)   {
-       patientRepository.save(mapper.toEntity(patient));
+        patientRepository.save(mapper.toEntity(patient));
+    }
+
+    @Override
+    public Optional<Patient> findByUuid(String uuid) {
+        return patientRepository.findByUuid(uuid)
+                .map(mapper::toModel);
     }
 }
