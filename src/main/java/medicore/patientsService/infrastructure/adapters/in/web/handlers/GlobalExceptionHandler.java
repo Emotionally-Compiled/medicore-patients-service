@@ -62,6 +62,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleUnexpectedException(Exception ex){
+        log.error(ex.getMessage(), ex.fillInStackTrace());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(problemDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected Internal error in patient microservice"));
     }
