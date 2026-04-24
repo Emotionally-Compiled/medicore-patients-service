@@ -1,6 +1,8 @@
 package medicore.patientsService.infrastructure.config.usecases;
 
+import medicore.patientsService.application.GetPatientProfileUseCaseImpl;
 import medicore.patientsService.application.RegisterPatientUseCaseImpl;
+import medicore.patientsService.domain.ports.in.GetPatientProfileUseCase;
 import medicore.patientsService.domain.ports.in.RegisterPatientUseCase;
 import medicore.patientsService.domain.ports.out.IdentityProviderPort;
 import medicore.patientsService.domain.ports.out.PatientRepositoryPort;
@@ -13,5 +15,10 @@ public class PatientServiceConfig {
     @Bean
     public RegisterPatientUseCase registerPatientUseCase (PatientRepositoryPort patientRepositoryPort, IdentityProviderPort identityProviderPort){
         return new RegisterPatientUseCaseImpl(patientRepositoryPort,identityProviderPort);
+    }
+
+    @Bean
+    public GetPatientProfileUseCase getPatientProfileUseCase(PatientRepositoryPort patientRepositoryPort){
+        return new GetPatientProfileUseCaseImpl(patientRepositoryPort);
     }
 }
