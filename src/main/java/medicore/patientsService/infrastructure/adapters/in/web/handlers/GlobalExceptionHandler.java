@@ -1,20 +1,20 @@
 package medicore.patientsService.infrastructure.adapters.in.web.handlers;
 
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import medicore.patientsService.domain.exceptions.InvalidCredentialsException;
-import medicore.patientsService.domain.exceptions.PatientAlreadyExistsException;
-import medicore.patientsService.domain.exceptions.RegistrationFailedException;
-import medicore.patientsService.domain.exceptions.ResourceNotFoundException;
+import medicore.patientsService.domain.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @RestControllerAdvice
@@ -59,6 +59,21 @@ public class GlobalExceptionHandler {
                 .body(problemDetail(HttpStatus.FORBIDDEN, ex.getMessage()));
     }
 
+    // Jackson error for Unrecognized fields in body request
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex){
+        log.error("Unidentified fields in the request : {}",ex.getMessage(),ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(problemDetail(HttpStatus.BAD_REQUEST, "Unidentified fields in the request"));
+    }
+
+    @ExceptionHandler(UpdatePatientFailedException.class)
+    public ResponseEntity<?> handleUpdatePatientFailedExceptionException( UpdatePatientFailedException ex){
+        log.error("Database operation failed: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(problemDetail(HttpStatus.INTERNAL_SERVER_ERROR,"The patient's information could not be updated. Please try again later."));
+
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleUnexpectedException(Exception ex){

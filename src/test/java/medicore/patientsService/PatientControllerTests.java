@@ -3,7 +3,9 @@ package medicore.patientsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import medicore.patientsService.domain.ports.in.GetPatientProfileUseCase;
 import medicore.patientsService.domain.ports.in.RegisterPatientUseCase;
+import medicore.patientsService.domain.ports.in.UpdatePatientUseCase;
 import medicore.patientsService.infrastructure.adapters.in.web.dto.request.PatientRegisterRequest;
+import medicore.patientsService.infrastructure.adapters.in.web.dto.request.UpdatePatientRequest;
 import medicore.patientsService.infrastructure.config.security.JwtAuthenticationConverter;
 import medicore.patientsService.infrastructure.config.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -20,11 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -50,6 +54,8 @@ public class PatientControllerTests {
     @MockitoBean
     private GetPatientProfileUseCase getPatientProfileUseCase;
 
+    @MockitoBean
+    private UpdatePatientUseCase updatePatientUseCase;
 
     private final GetPatientProfileUseCase.GetPatientResponseCommand mockResponse = new GetPatientProfileUseCase
             .GetPatientResponseCommand(
@@ -134,5 +140,53 @@ public class PatientControllerTests {
     }
 
 
+    @Test
+    public void UpdateCurrentPatientShouldReturnOk() throws Exception {
+        String mockSubject = "user-uuid-12345";
 
+        UpdatePatientRequest request = new UpdatePatientRequest(
+                "Test",
+                "testini",
+                "10101010",
+                LocalDate.now());
+
+        String json = objectMapper.writeValueAsString(request);
+        mockMvc.perform(put("/me")
+                        .with(csrf())
+                        .with(jwt()
+                                .jwt(builder -> builder.subject(mockSubject))
+                                .authorities(new SimpleGrantedAuthority("ROLE_Patient")) // change role
+
+                        )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void UpdateCurrentPatientShouldReturnBadRequest() throws Exception {
+        String mockSubject = "user-uuid-12345";
+
+        UpdatePatientRequest request = new UpdatePatientRequest(
+                "",
+                "testini",
+                "aaaaa",
+                LocalDate.now());
+
+        String json = objectMapper.writeValueAsString(request);
+        mockMvc.perform(put("/me")
+                        .with(csrf())
+                        .with(jwt()
+                                .jwt(builder -> builder.subject(mockSubject))
+                                .authorities(new SimpleGrantedAuthority("ROLE_Patient")) // change role
+
+                        )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isBadRequest());
+
+    }
 }
