@@ -53,23 +53,14 @@ public class RegisterPatientUseCaseImpl implements RegisterPatientUseCase {
 
 
         } catch (PersistenceException e){ // catch errors from database
-            log.error("Unexpected error during saving patient from database for document: {}. Reason: {}",
-                    command.identityDocument(),
-                    e.getMessage()
-            );
             identityProviderPort.deleteUser(authId);
             log.info("Patient with uuid {} deleted from identity provider database ", authId);
-            throw new RegistrationFailedException("Error saving patient from database ",e);
+            throw new RegistrationFailedException("Unexpected error during saving patient from database for document  " + command.identityDocument(),e);
         }
 
         catch (Exception e) { // catch unexpected errors
 
-            log.error("Unexpected error during patient registration for document: {}. Reason: {}",
-                    command.identityDocument(),
-                    e.getMessage()
-            );
-
-            throw new RegistrationFailedException("Internal Error during Register", e);
+            throw new RegistrationFailedException("Internal Error during Registration", e);
         }
 
 

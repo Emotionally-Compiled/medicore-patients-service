@@ -28,8 +28,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RegistrationFailedException.class)
     public ResponseEntity<?> handleRegistrationFailedException(RegistrationFailedException ex){
+        log.error(ex.getMessage(),ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(problemDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
+                .body(problemDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error during patient registration, try again later."));
     }
 
     @ExceptionHandler(PatientAlreadyExistsException.class)
