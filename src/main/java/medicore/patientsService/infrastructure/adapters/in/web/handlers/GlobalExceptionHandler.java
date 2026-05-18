@@ -1,6 +1,5 @@
 package medicore.patientsService.infrastructure.adapters.in.web.handlers;
 
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import medicore.patientsService.domain.exceptions.*;
 import org.springframework.http.HttpStatus;
@@ -41,8 +40,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex){
+        List<Map<String,String>> errors = new ArrayList<>();
+        for(FieldError e : ex.getFieldErrors()){
+            errors.add(Map.of("field",e.getField(),"message",e.getDefaultMessage()));
+        }
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(problemDetail(HttpStatus.BAD_REQUEST, ex.getMessage()));
+                .body(problemDetail(HttpStatus.BAD_REQUEST, "Validation failed for the request payload", errors));
     }
 
 
@@ -90,6 +94,15 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle(httpStatus.getReasonPhrase());
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         problemDetail.setProperty("traceId", UUID.randomUUID().toString());
+        return problemDetail;
+    }
+
+    private <T> ProblemDetail problemDetail (HttpStatus httpStatus, String message, T errors) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(httpStatus, message);
+        problemDetail.setTitle(httpStatus.getReasonPhrase());
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        problemDetail.setProperty("traceId", UUID.randomUUID().toString());
+        problemDetail.setProperty("errors",errors);
         return problemDetail;
     }
 }
