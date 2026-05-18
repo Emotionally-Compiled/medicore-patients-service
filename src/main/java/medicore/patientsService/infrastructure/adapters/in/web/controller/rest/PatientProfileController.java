@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import medicore.patientsService.domain.ports.in.GetPatientProfileUseCase;
 import medicore.patientsService.domain.ports.in.UpdatePatientUseCase;
 import medicore.patientsService.infrastructure.adapters.in.web.dto.request.UpdatePatientRequest;
+import medicore.patientsService.infrastructure.adapters.in.web.mapper.PatientWebMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +24,7 @@ public class PatientProfileController {
 
     private final GetPatientProfileUseCase getPatientProfileUseCase;
     private final UpdatePatientUseCase updatePatientUseCase;
+    private final PatientWebMapper mapper;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Patient found "),
@@ -34,9 +36,9 @@ public class PatientProfileController {
     @GetMapping
     public ResponseEntity<?> getPatientProfile(@AuthenticationPrincipal Jwt jwt){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(getPatientProfileUseCase.getPatientProfile(jwt.getSubject()));
+                .body( mapper.toDto(getPatientProfileUseCase.getPatientProfile(jwt.getSubject())));
     }
-    
+
 
     @PreAuthorize("hasRole('Patient')")
     @PutMapping

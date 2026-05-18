@@ -1,11 +1,16 @@
 package medicore.patientsService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import medicore.patientsService.domain.models.IdentityDocument;
+import medicore.patientsService.domain.models.Patient;
 import medicore.patientsService.domain.ports.in.GetPatientProfileUseCase;
 import medicore.patientsService.domain.ports.in.RegisterPatientUseCase;
+import medicore.patientsService.domain.ports.in.SearchPatientsUseCase;
 import medicore.patientsService.domain.ports.in.UpdatePatientUseCase;
+import medicore.patientsService.infrastructure.adapters.in.web.dto.reponse.PatientResponse;
 import medicore.patientsService.infrastructure.adapters.in.web.dto.request.PatientRegisterRequest;
 import medicore.patientsService.infrastructure.adapters.in.web.dto.request.UpdatePatientRequest;
+import medicore.patientsService.infrastructure.adapters.in.web.mapper.PatientWebMapper;
 import medicore.patientsService.infrastructure.config.security.JwtAuthenticationConverter;
 import medicore.patientsService.infrastructure.config.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -22,8 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -57,14 +62,20 @@ public class PatientControllerTests {
     @MockitoBean
     private UpdatePatientUseCase updatePatientUseCase;
 
-    private final GetPatientProfileUseCase.GetPatientResponseCommand mockResponse = new GetPatientProfileUseCase
-            .GetPatientResponseCommand(
-            "Test",
-            "puerta",
-            "30799",
-            "test@test.com",
+    @MockitoBean
+    private SearchPatientsUseCase searchPatientsUseCase;
+
+    @MockitoBean
+    private PatientWebMapper patientWebMapper;
+
+    private final Patient mockResponse = new Patient(
+            new IdentityDocument("100011100"),
             LocalDate.now(),
-            "100011100"
+            "test@example.com",
+            "32020202",
+            "testini",
+            "test"
+
     );
 
 
@@ -108,6 +119,8 @@ public class PatientControllerTests {
         String mockSubject = "user-uuid-12345";
 
         when(getPatientProfileUseCase.getPatientProfile(anyString())).thenReturn(mockResponse);
+        when(patientWebMapper.toDto(any(Patient.class))).thenReturn(
+                new PatientResponse("testini", "test", "32020202", "test@example.com", LocalDate.now(), "100011100"));
 
         mockMvc.perform(get("/me")
                         .with(csrf())
@@ -118,7 +131,7 @@ public class PatientControllerTests {
                         ).contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.identityDocument").value("100011100"));
+                .andExpect(jsonPath("$.email").value("test@example.com"));
 
     }
 
