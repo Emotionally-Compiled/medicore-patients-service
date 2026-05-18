@@ -1,6 +1,7 @@
 package medicore.patientsService.infrastructure.adapters.in.web.controller.rest;
 
 import lombok.RequiredArgsConstructor;
+import medicore.patientsService.domain.ports.in.GetPatientProfileUseCase;
 import medicore.patientsService.domain.ports.in.SearchPatientsUseCase;
 import medicore.patientsService.infrastructure.adapters.in.web.dto.reponse.PageResponse;
 import medicore.patientsService.infrastructure.adapters.in.web.dto.query.SearchFilterPatientQuery;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class PatientController {
 
     private final SearchPatientsUseCase searchPatients;
+    private final GetPatientProfileUseCase getProfile;
     private final PatientWebMapper mapper;
 
     @GetMapping
@@ -28,6 +30,12 @@ public class PatientController {
                 .toPageResponse(searchPatients.execute(size,page,mapper.toDomain(request)));
 
         return ResponseEntity.ok(pageResponse);
+    }
+
+    @PreAuthorize("hasAnyRole('Doctor', 'Admin')")
+    @GetMapping("/{uuid}")
+    public ResponseEntity<?> getPatientProfile(@PathVariable String uuid){
+        return ResponseEntity.ok(mapper.toDto( getProfile.getPatientProfile(uuid)));
     }
 
 

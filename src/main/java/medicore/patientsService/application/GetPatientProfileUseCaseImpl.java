@@ -20,7 +20,7 @@ public class GetPatientProfileUseCaseImpl implements GetPatientProfileUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public GetPatientResponseCommand getPatientProfile(String uuid) {
+    public Patient getPatientProfile(String uuid) {
 
         log.info("System/database searching for patient with uuid {}", uuid);
         Optional<Patient> patient = patientRepositoryPort.findByUuid(uuid);
@@ -28,16 +28,9 @@ public class GetPatientProfileUseCaseImpl implements GetPatientProfileUseCase {
         if (patient.isEmpty()){
             throw new ResourceNotFoundException("Patient with uuid " + uuid + "Not Found");
         }
-        Patient patientFound = patient.get();
+
 
         log.info("Patient ({}) Found!", uuid);
-        return new GetPatientResponseCommand(
-                patientFound.getFirstName(),
-                patientFound.getLastName(),
-                patientFound.getPhoneNumber(),
-                patientFound.getEmail(),
-                patientFound.getDateOfBirth(),
-                patientFound.getIdentityDocument().value()
-        );
+        return patient.get();
     }
 }
